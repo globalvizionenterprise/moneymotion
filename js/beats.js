@@ -87,9 +87,9 @@
     var playBtn = it.audio ? '<button class="beat-play" type="button" aria-label="Play preview">\u25B6</button>'
       : it.youtube ? '<button class="beat-play beat-yt" type="button" aria-label="Play video demo">\u25B6</button>'
       : '<span class="beat-note">\uD83C\uDFB5</span>';
-    var priceTxt = (it.from ? "from " : "") + "$" + it.price;
+    var priceTxt = it.price == null ? "" : (it.from ? "from " : "") + "$" + it.price;
     var buyBtn = it.external
-      ? '<a class="btn btn-gold btn-small" href="' + esc(it.external) + '" target="_blank" rel="noopener">' + (Number(it.price) === 0 ? "FREE — Get It" : "Shop — " + esc(priceTxt)) + "</a>"
+      ? '<a class="btn btn-gold btn-small" href="' + esc(it.external) + '" target="_blank" rel="noopener">' + (it.price == null ? "Shop Her Beat Site" : Number(it.price) === 0 ? "FREE — Get It" : "Shop — " + esc(priceTxt)) + "</a>"
       : '<button class="btn btn-gold btn-small beat-buy" type="button">Buy — ' + esc(priceTxt) + "</button>";
     return '<div class="card beat-row" data-id="' + esc(it.id) + '">' +
       playBtn +
