@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Global Vizion">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GV LYRIC VIDEO MAKER — GLOBAL VIZION ENTERPRISE</title>
+<meta name="description" content="GV Lyric Video Maker: send your song and get a synced, animated lyric video back. Free during beta — no watermark, full HD. A Global Vizion / Money Motion artist promo tool.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="gv-topfilm gv-globefilm" aria-hidden="true">
+  <video src="https://mqucttxiwhdbsgzoitmd.supabase.co/storage/v1/object/public/site-media/gv-globe.mp4" poster="https://mqucttxiwhdbsgzoitmd.supabase.co/storage/v1/object/public/site-media/gv-globe-poster.jpg" autoplay muted loop playsinline preload="metadata"></video>
+</div>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html"><img src="gv-mark.svg" alt="GLOBAL VIZION ENTERPRISE logo"><span>GLOBAL VIZION</span></a>
+    <div class="links">
+      <a href="index.html">Home</a>
+      <a href="live.html">Live Room</a>
+      <a href="shows.html">Shows</a>
+      <a href="gallery.html">Photos</a>
+      <a href="artists.html">Artists</a>
+      <a href="services.html" class="active">Artist Services</a>
+      <a href="producers.html">Producers</a>
+      <a href="vizion.html">Vizion Audio Labs</a>
+      <a href="fame.html">Fame Life</a>
+      <a href="global.html">Global Vizion</a>
+      <a href="chat.html">AI Chat</a>
+      <a href="#" data-install-app>📲 Install App</a>
+      <a href="book.html">Book a Session</a>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <img id="gv-logo" alt="GLOBAL VIZION ENTERPRISE logo" style="display:block;margin:0 auto 18px;width:min(340px,84vw);height:auto;border-radius:18px;box-shadow:0 10px 40px rgba(0,0,0,.55);">
+    <h1 class="chrome">GV LYRIC VIDEO MAKER</h1>
+    <p class="tagline">Your Song. Every Word On Screen, Right On The Beat.</p>
+    <p><strong>FREE during beta — no watermark, full HD.</strong></p>
+    <p class="muted">Send us your song and we turn it into a synced, animated lyric video — every word timed to your vocal, styled and ready to post. It's built and rendered by the GV studio pipeline, then delivered back to you. No watermark stamped on your art, no per-video fee while the beta runs.</p>
+    <div class="cta-row">
+      <a class="btn btn-gold" href="#start">Make My Lyric Video</a>
+      <a class="btn" href="services.html">All Artist Services</a>
+    </div>
+  </section>
+
+  <h2 class="section-title">How It Works</h2>
+  <div class="info-grid">
+    <div class="card"><p><span>1. Send Your Song</span>Fill in the form below with a link to your song file (Drive, Dropbox or a streaming link) and your lyrics if you have them written down.</p></div>
+    <div class="card"><p><span>2. We Sync Every Word</span>Our studio pipeline transcribes your vocal and times every single word to the performance — then animates the lyrics in the style you picked.</p></div>
+    <div class="card"><p><span>3. Your Video Comes Back</span>The finished lyric video is delivered back to you — full HD, ready for Reels, TikTok, Shorts and your release rollout. <strong>No watermark.</strong></p></div>
+  </div>
+  <div class="note-strip">Heads up, honestly: your video is made by the GV studio pipeline and delivered back to you — it is not an instant in-browser render. Good sync takes real processing, and we'd rather send you a right one than a fast wrong one.</div>
+
+  <h2 class="section-title">Pick Your Style</h2>
+  <div class="info-grid">
+    <div class="card"><p><span>PLAIN</span>Clean and bold. Full lyric lines on screen, big white type with a hard outline — readable everywhere, zero distractions from the song.</p></div>
+    <div class="card"><p><span>POP / ZOOM — Gold</span>The crowd favourite. The line stays up while the word being sung pops gold and zooms in time with the vocal. Built for Reels and TikTok energy.</p></div>
+    <div class="card"><p><span>GHOSTLY HD</span>The cinematic one. Words hit with a white-hot flash and bloom, ghost echoes trail behind them and sparkles ride the line. Made for hooks that need to feel big.</p></div>
+  </div>
+
+  <h2 class="section-title" id="start">Start Your Lyric Video</h2>
+  <div class="card">
+    <p>Fill this in and it opens WhatsApp with your song details ready to send to KEYZ. Send your song file on WhatsApp right after if your link doesn't cover it.</p>
+    <form id="lv-form">
+      <label>Your stage name<input id="lv-name" required></label>
+      <label>Your email address<input id="lv-email" type="email" required></label>
+      <label>Song title<input id="lv-song" required></label>
+      <label>Link to your song file<input id="lv-link" placeholder="Drive / Dropbox / streaming link — WAV or MP3"></label>
+      <label>Pick your style
+        <select id="lv-style">
+          <option>POP / ZOOM — Gold</option>
+          <option>PLAIN</option>
+          <option>GHOSTLY HD</option>
+        </select>
+      </label>
+      <label>Format
+        <select id="lv-format">
+          <option>Vertical 1080×1920 (Reels / TikTok / Shorts)</option>
+          <option>Widescreen 1920×1080 (YouTube)</option>
+        </select>
+      </label>
+      <label>Your lyrics (optional — paste them and we sync to your exact words)<textarea id="lv-lyrics" rows="4" placeholder="Paste your lyrics here, or leave blank and we transcribe the song"></textarea></label>
+      <label>Anything else<textarea id="lv-details" rows="3" placeholder="Release date, colours, anything you want in the video"></textarea></label>
+      <button class="btn btn-gold" type="submit">Send via WhatsApp</button>
+    </form>
+    <p class="muted">Or call/text: <a href="tel:+17189088466">718-908-8466</a> · <a href="tel:+17184156422">718-415-6422</a> · Instagram: <a href="https://www.instagram.com/keyzondabeatz37" target="_blank" rel="noopener">@keyzondabeatz37</a></p>
+  </div>
+</main>
+
+<footer>
+  MONEY MOTION STUDIOS — an affiliate of GLOBAL VIZION ENTERPRISE · 2 Saint Nicholas Ave, Brooklyn, NY 11237 · <a href="tel:+17189088466">718-908-8466</a> / <a href="tel:+17184156422">718-415-6422</a><br>
+  <a href="#" data-install-app>📲 Install the App</a> · From the block to the booth.
+</footer>
+
+<script src="js/gv-logo-data.js"></script>
+<script>
+document.getElementById("lv-form").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var lyrics = document.getElementById("lv-lyrics").value.trim();
+  var lines = [
+    "GV LYRIC VIDEO MAKER - New Request (FREE beta)",
+    "Stage name: " + document.getElementById("lv-name").value,
+    "Email: " + document.getElementById("lv-email").value,
+    "Song title: " + document.getElementById("lv-song").value,
+    "Song link: " + (document.getElementById("lv-link").value || "sending the file on WhatsApp"),
+    "Style: " + document.getElementById("lv-style").value,
+    "Format: " + document.getElementById("lv-format").value,
+    "Lyrics: " + (lyrics ? "pasted below" : "none — transcribe the song"),
+    "Details: " + (document.getElementById("lv-details").value || "n/a")
+  ];
+  if (lyrics) {
+    lines.push("", "LYRICS:", lyrics);
+  }
+  window.open("https://wa.me/17189088466?text=" + encodeURIComponent(lines.join("\n")), "_blank");
+});
+</script>
+</body>
+</html>
