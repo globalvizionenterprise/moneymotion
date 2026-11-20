@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Global Vizion">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GV LYRIC STUDIO — GLOBAL VIZION ENTERPRISE</title>
+<meta name="description" content="GV Lyric Studio: load your song, tap each lyric line in time with the vocal, export SRT/LRC and render your own lyric video. Free during beta, no watermark. A Global Vizion / Money Motion artist promo tool.">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .studio-stage { position: relative; margin: 0 auto; background: #000; border-radius: 14px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,.55); }
+  .studio-stage.vertical { width: min(340px, 88vw); aspect-ratio: 9 / 16; }
+  .studio-stage.wide { width: min(680px, 92vw); aspect-ratio: 16 / 9; }
+  .studio-stage .bg-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .studio-stage .bg-grad { position: absolute; inset: 0; background: linear-gradient(160deg, #07070d, #1b1035 55%, #33205c); }
+  .studio-stage .lyric-layer { position: absolute; left: 6%; right: 6%; bottom: 13%; text-align: center; font-weight: 800; color: #fff; font-size: clamp(15px, 4.6vw, 24px); line-height: 1.35; text-shadow: 0 2px 0 #000, 0 0 8px rgba(0,0,0,.9), 2px 0 0 #000, -2px 0 0 #000; }
+  .studio-stage .lyric-layer .w { transition: color .08s, transform .08s; display: inline-block; }
+  .studio-stage .lyric-layer .w.on { color: #FFD24A; transform: scale(1.22); }
+  .studio-stage .title-layer { position: absolute; top: 9%; left: 6%; right: 6%; text-align: center; color: #FFD24A; font-weight: 900; font-size: clamp(16px, 5vw, 27px); text-shadow: 0 2px 10px rgba(0,0,0,.8); }
+  .tap-btn { display: block; width: 100%; padding: 20px; font-size: 19px; font-weight: 900; border-radius: 14px; margin: 10px 0; }
+  .line-list { max-height: 380px; overflow-y: auto; border: 1px solid rgba(255,255,255,.12); border-radius: 10px; }
+  .line-row { display: flex; gap: 8px; align-items: center; padding: 7px 9px; border-bottom: 1px solid rgba(255,255,255,.07); cursor: pointer; }
+  .line-row.sel { background: rgba(255,210,74,.13); }
+  .line-row.done .ltime { color: #FFD24A; }
+  .line-row .ltime { font-variant-numeric: tabular-nums; min-width: 62px; color: var(--muted); font-size: 13px; }
+  .line-row .ltext { flex: 1; font-size: 14.5px; }
+  .line-row button { padding: 3px 8px; font-size: 12px; }
+  .nudge-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: 8px 0; }
+  .nudge-row button { flex: 1; min-width: 62px; }
+  .bg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 560px) { .bg-grid { grid-template-columns: repeat(2, 1fr); } }
+  .bg-pick { border: 2px solid rgba(255,255,255,.14); border-radius: 10px; overflow: hidden; cursor: pointer; background: rgba(255,255,255,.03); padding: 0; text-align: center; color: var(--text); }
+  .bg-pick img, .bg-pick .bg-swatch { width: 100%; height: 74px; object-fit: cover; display: block; }
+  .bg-pick span { display: block; padding: 6px 4px; font-size: 12.5px; font-weight: 700; }
+  .bg-pick.sel { border-color: #FFD24A; }
+  .prog-wrap { display: none; margin: 10px 0; }
+  .prog-wrap progress { width: 100%; height: 18px; }
+  .studio-note { font-size: 13.5px; }
+  #st-audio { width: 100%; margin: 8px 0; }
+  .row-flex { display: flex; gap: 8px; flex-wrap: wrap; }
+  .row-flex > * { flex: 1; min-width: 130px; }
+</style>
+</head>
+<body>
+
+<div class="gv-topfilm gv-globefilm" aria-hidden="true">
+  <video src="https://mqucttxiwhdbsgzoitmd.supabase.co/storage/v1/object/public/site-media/gv-globe.mp4" poster="https://mqucttxiwhdbsgzoitmd.supabase.co/storage/v1/object/public/site-media/gv-globe-poster.jpg" autoplay muted loop playsinline preload="metadata"></video>
+</div>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html"><img src="gv-mark.svg" alt="GLOBAL VIZION ENTERPRISE logo"><span>GLOBAL VIZION</span></a>
+    <div class="links">
+      <a href="index.html">Home</a>
+      <a href="live.html">Live Room</a>
+      <a href="shows.html">Shows</a>
+      <a href="gallery.html">Photos</a>
+      <a href="artists.html">Artists</a>
+      <a href="services.html" class="active">Artist Services</a>
+      <a href="producers.html">Producers</a>
+      <a href="vizion.html">Vizion Audio Labs</a>
+      <a href="fame.html">Fame Life</a>
+      <a href="global.html">Global Vizion</a>
+      <a href="chat.html">AI Chat</a>
+      <a href="#" data-install-app>📲 Install App</a>
+      <a href="book.html">Book a Session</a>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1 class="chrome">GV LYRIC STUDIO</h1>
+    <p class="tagline">Time Your Own Lyrics. Right Here. Free.</p>
+    <p><strong>FREE during beta — no watermark, full HD.</strong></p>
+    <p class="muted">Load your song, paste your lyrics, and tap each line in time with your vocal. Export the timing file (SRT / LRC), preview it over a background, render the video right in your browser — or send the timed project to the GV studio and we'll render it for you. <strong>Your song never leaves your device</strong> unless you choose to send it.</p>
+    <div class="cta-row">
+      <a class="btn" href="lyric-video.html">← GV Lyric Video Maker</a>
+      <a class="btn btn-gold" href="#studio">Open The Studio</a>
+    </div>
+  </section>
+
+  <h2 class="section-title" id="studio">1 · Your Song + Lyrics</h2>
+  <div class="card">
+    <label>Load your song (stays in your browser — nothing uploads)
+      <input id="st-file" type="file" accept="audio/*">
+    </label>
+    <audio id="st-audio" controls preload="metadata"></audio>
+    <div class="row-flex">
+      <label>Song title<input id="st-title" placeholder="Song title"></label>
+      <label>Your stage name<input id="st-artist" placeholder="Stage name"></label>
+    </div>
+    <label>Your lyrics — one line per line
+      <textarea id="st-lyrics" rows="7" placeholder="Paste your lyrics here, one line per line, then hit Load Lines"></textarea>
+    </label>
+    <div class="row-flex">
+      <button class="btn btn-gold" id="st-load-lines" type="button">Load Lines</button>
+      <button class="btn" id="st-clear-project" type="button">New Project (clear all)</button>
+    </div>
+    <p class="muted studio-note">Tip: slow the song down (0.5× under the tap pad) if the lines come fast. Your work autosaves in this browser.</p>
+  </div>
+
+  <h2 class="section-title">2 · Tap Each Line On The Vocal</h2>
+  <div class="card">
+    <p>Press play, then hit <strong>TAP</strong> (or the <strong>T</strong> key) the moment each line starts. Tap a line in the list to re-time it; nudge the selected line until it sits right.</p>
+    <button class="btn btn-gold tap-btn" id="st-tap" type="button">⏺ TAP — THIS LINE STARTS NOW</button>
+    <div class="nudge-row">
+      <span class="muted">Playback:</span>
+      <button class="btn btn-small" data-rate="0.5" type="button">0.5×</button>
+      <button class="btn btn-small" data-rate="0.75" type="button">0.75×</button>
+      <button class="btn btn-small" data-rate="1" type="button">1×</button>
+    </div>
+    <div class="nudge-row">
+      <span class="muted">Nudge selected:</span>
+      <button class="btn btn-small" data-nudge="-0.5" type="button">−0.5s</button>
+      <button class="btn btn-small" data-nudge="-0.1" type="button">−0.1s</button>
+      <button class="btn btn-small" data-nudge="0.1" type="button">+0.1s</button>
+      <button class="btn btn-small" data-nudge="0.5" type="button">+0.5s</button>
+      <button class="btn btn-small" id="st-clear-line" type="button">Clear timing</button>
+    </div>
+    <div class="line-list" id="st-lines"></div>
+    <p class="muted studio-note" id="st-progress">No lines loaded yet.</p>
+  </div>
+
+  <h2 class="section-title">3 · Background + Format</h2>
+  <div class="card">
+    <div class="bg-grid" id="st-bg-grid"></div>
+    <label style="margin-top:12px;">…or use your own background (image or video)
+      <input id="st-bg-file" type="file" accept="image/*,video/*">
+    </label>
+    <div class="row-flex">
+      <label>Format
+        <select id="st-format">
+          <option value="1080x1920">Vertical 1080×1920 (Reels / TikTok / Shorts)</option>
+          <option value="1920x1080">Widescreen 1920×1080 (YouTube)</option>
+        </select>
+      </label>
+      <label>Style
+        <select id="st-style">
+          <option value="pop">POP / ZOOM — Gold</option>
+          <option value="plain">PLAIN</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <h2 class="section-title">4 · Preview</h2>
+  <div class="card">
+    <div class="studio-stage vertical" id="st-stage">
+      <div class="bg-grad" id="st-bg-grad"></div>
+      <img class="bg-layer" id="st-bg-img" alt="" style="display:none">
+      <video class="bg-layer" id="st-bg-vid" muted loop playsinline style="display:none"></video>
+      <div class="title-layer" id="st-title-layer"></div>
+      <div class="lyric-layer" id="st-lyric-layer"></div>
+    </div>
+    <p class="muted studio-note" style="text-align:center;">Press play on your song above — the words light up here in time. The preview is a guide; the render is the real thing.</p>
+  </div>
+
+  <h2 class="section-title">5 · Export</h2>
+  <div class="card">
+    <div class="row-flex">
+      <button class="btn" id="st-export-srt" type="button">Download SRT</button>
+      <button class="btn" id="st-export-lrc" type="button">Download LRC</button>
+    </div>
+    <button class="btn btn-gold tap-btn" id="st-render" type="button">🎬 Export Video — Render In Your Browser</button>
+    <div class="prog-wrap" id="st-prog-wrap">
+      <progress id="st-prog" value="0" max="100"></progress>
+      <p class="muted studio-note" id="st-prog-label">Preparing…</p>
+    </div>
+    <p class="muted studio-note" id="st-render-note">In-browser rendering runs on your own device with a real video engine (tested working in Chrome). The engine loads once (~30 MB), and rendering a full song at full HD takes a while — it runs at your device's speed, not a server's. Short clips are quick. For the fast lane, send the timed project to the studio instead:</p>
+    <button class="btn" id="st-send-wa" type="button">Send Timed Project To GV Studio (WhatsApp)</button>
+    <p class="muted studio-note">That opens WhatsApp with your style, background and format picked — download the SRT above first and attach it in the chat along with your song, and we'll render it on the studio pipeline, full HD, no watermark.</p>
+  </div>
+</main>
+
+<footer>
+  MONEY MOTION STUDIOS — an affiliate of GLOBAL VIZION ENTERPRISE · 2 Saint Nicholas Ave, Brooklyn, NY 11237 · <a href="tel:+17189088466">718-908-8466</a> / <a href="tel:+17184156422">718-415-6422</a><br>
+  <a href="#" data-install-app>📲 Install the App</a> · From the block to the booth.
+</footer>
+
+<script src="js/gv-logo-data.js"></script>
+<script>
+"use strict";
+/* GV LYRIC STUDIO — pure client-side. The artist's song and lyrics never
+   leave the device except by their own WhatsApp send. */
+var GOLD = "#FFD24A";
+var BACKGROUNDS = [
+  { name: "dark-stage",   label: "Dark Stage" },
+  { name: "gold-luxe",    label: "Gold Luxe" },
+  { name: "neon-club",    label: "Neon Club" },
+  { name: "studio",       label: "Studio" },
+  { name: "city-night",   label: "City Night" },
+  { name: "clean-minimal",label: "Clean Minimal" }
+];
+var state = {
+  lines: [],            // {text, start|null}
+  sel: 0,               // selected / next-to-time line index
+  audioFile: null, audioName: "",
+  bg: { kind: "library", name: "dark-stage" },  // or {kind:"upload", url, isVideo, file}
+  format: "1080x1920", style: "pop"
+};
+var $ = function (id) { return document.getElementById(id); };
+var audio = $("st-audio");
+
+function fmtClock(t) {
+  if (t === null || t === undefined || isNaN(t)) return "--:--.-";
+  var m = Math.floor(t / 60), s = t - m * 60;
+  return m + ":" + (s < 10 ? "0" : "") + s.toFixed(1);
+}
+function fmtSRT(t) {
+  var h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60),
+      s = Math.floor(t % 60), ms = Math.round((t - Math.floor(t)) * 1000);
+  function p(n, w) { return String(n).padStart(w, "0"); }
+  return p(h, 2) + ":" + p(m, 2) + ":" + p(s, 2) + "," + p(ms, 3);
+}
+function fmtLRC(t) {
+  var m = Math.floor(t / 60), s = t - m * 60;
+  return "[" + String(m).padStart(2, "0") + ":" + s.toFixed(2).padStart(5, "0") + "]";
+}
+function fmtASS(t) {
+  var h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
+  return h + ":" + String(m).padStart(2, "0") + ":" + s.toFixed(2).padStart(5, "0");
+}
+function round2(t) { return Math.round(t * 100) / 100; }
+
+/* ---------- lines ---------- */
+function timedLines() { return state.lines.filter(function (l) { return l.start !== null; }); }
+function lineEnd(i) {
+  var l = state.lines[i];
+  for (var j = i + 1; j < state.lines.length; j++)
+    if (state.lines[j].start !== null) return state.lines[j].start;
+  var d = audio.duration;
+  return Math.min(l.start + 4.0, (isFinite(d) && d > l.start) ? d : l.start + 4.0);
+}
+function renderLines() {
+  var box = $("st-lines"); box.innerHTML = "";
+  state.lines.forEach(function (l, i) {
+    var row = document.createElement("div");
+    row.className = "line-row" + (i === state.sel ? " sel" : "") + (l.start !== null ? " done" : "");
+    row.dataset.idx = i;
+    var t = document.createElement("span"); t.className = "ltime"; t.textContent = fmtClock(l.start);
+    var x = document.createElement("span"); x.className = "ltext"; x.textContent = l.text;
+    row.appendChild(t); row.appendChild(x);
+    row.addEventListener("click", function () { selectLine(i, true); });
+    box.appendChild(row);
+  });
+  var done = timedLines().length;
+  $("st-progress").textContent = state.lines.length
+    ? done + " of " + state.lines.length + " lines timed." + (done < state.lines.length ? " Next up: line " + (state.sel + 1) + "." : " All lines timed — export below.")
+    : "No lines loaded yet.";
+  saveProject();
+}
+function selectLine(i, scroll) {
+  state.sel = Math.max(0, Math.min(i, state.lines.length - 1));
+  renderLines();
+  if (scroll) {
+    var row = $("st-lines").children[state.sel];
+    if (row) row.scrollIntoView({ block: "nearest" });
+  }
+}
+function loadLinesFromText() {
+  var raw = $("st-lyrics").value.split(/\r?\n/).map(function (s) { return s.trim(); })
+    .filter(function (s) { return s.length > 0; });
+  var old = state.lines;
+  state.lines = raw.map(function (text, i) {
+    return { text: text, start: (old[i] && old[i].text === text) ? old[i].start : null };
+  });
+  state.sel = 0;
+  renderLines();
+}
+function tapSync() {
+  if (!state.lines.length) { alert("Load your lyrics first (step 1)."); return; }
+  if (!audio.src) { alert("Load your song first (step 1)."); return; }
+  var i = state.sel;
+  state.lines[i].start = round2(audio.currentTime);
+  if (i + 1 < state.lines.length) state.sel = i + 1;
+  renderLines();
+  var row = $("st-lines").children[state.sel];
+  if (row) row.scrollIntoView({ block: "nearest" });
+}
+function nudgeSelected(d) {
+  var l = state.lines[state.sel];
+  if (!l || l.start === null) { alert("Time this line first (tap), then nudge it."); return; }
+  l.start = round2(Math.max(0, l.start + d));
+  renderLines();
+}
+
+/* ---------- word timings (even split inside the line, same idea as the
+   studio pipeline's grouping: display chunks of <= 6 words) ---------- */
+function lineChunks(i) {
+  var l = state.lines[i], words = l.text.split(/\s+/).filter(Boolean);
+  var start = l.start, end = lineEnd(i), dur = Math.max(0.3, end - start);
+  var chunks = [];
+  for (var k = 0; k < words.length; k += 6) {
+    var part = words.slice(k, k + 6);
+    var cs = start + dur * (k / words.length);
+    var ce = start + dur * (Math.min(k + 6, words.length) / words.length);
+    var ws = part.map(function (w, j) {
+      return { text: w, start: cs + (ce - cs) * (j / part.length),
+               end: cs + (ce - cs) * ((j + 1) / part.length) };
+    });
+    chunks.push({ start: cs, end: ce, words: ws });
+  }
+  return chunks;
+}
+function currentChunk(t) {
+  for (var i = 0; i < state.lines.length; i++) {
+    if (state.lines[i].start === null) continue;
+    if (t >= state.lines[i].start && t < lineEnd(i)) {
+      var ch = lineChunks(i);
+      for (var c = 0; c < ch.length; c++)
+        if (t >= ch[c].start && t < ch[c].end) return ch[c];
+      return ch[ch.length - 1];
+    }
+  }
+  return null;
+}
+
+/* ---------- preview ---------- */
+function updatePreview() {
+  var layer = $("st-lyric-layer");
+  var ch = audio.src ? currentChunk(audio.currentTime) : null;
+  if (!ch) { layer.innerHTML = ""; return; }
+  var t = audio.currentTime;
+  layer.innerHTML = "";
+  ch.words.forEach(function (w) {
+    var s = document.createElement("span");
+    s.className = "w" + (state.style === "pop" && t >= w.start && t < w.end ? " on" : "");
+    s.textContent = w.text;
+    layer.appendChild(s);
+    layer.appendChild(document.createTextNode(" "));
+  });
+}
+setInterval(updatePreview, 90);
+audio.addEventListener("timeupdate", updatePreview);
+function updateTitleLayer() {
+  var title = $("st-title").value.trim(), artist = $("st-artist").value.trim();
+  $("st-title-layer").textContent = title ? (title + (artist ? " — " + artist : "")) : "";
+}
+
+/* ---------- backgrounds ---------- */
+function buildBgGrid() {
+  var grid = $("st-bg-grid"); grid.innerHTML = "";
+  BACKGROUNDS.forEach(function (b) {
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.className = "bg-pick" + (state.bg.kind === "library" && state.bg.name === b.name ? " sel" : "");
+    var img = document.createElement("img");
+    img.src = "assets/lyric-bg/" + b.name + ".jpg"; img.alt = b.label; img.loading = "lazy";
+    var sp = document.createElement("span"); sp.textContent = b.label;
+    btn.appendChild(img); btn.appendChild(sp);
+    btn.addEventListener("click", function () {
+      state.bg = { kind: "library", name: b.name };
+      buildBgGrid(); applyBgPreview(); saveProject();
+    });
+    grid.appendChild(btn);
+  });
+}
+function applyBgPreview() {
+  var img = $("st-bg-img"), vid = $("st-bg-vid"), grad = $("st-bg-grad");
+  img.style.display = "none"; vid.style.display = "none"; grad.style.display = "none";
+  if (state.bg.kind === "library") {
+    vid.src = "assets/lyric-bg/" + state.bg.name + ".mp4";
+    vid.style.display = "block"; vid.play().catch(function () {});
+  } else if (state.bg.kind === "upload") {
+    if (state.bg.isVideo) { vid.src = state.bg.url; vid.style.display = "block"; vid.play().catch(function () {}); }
+    else { img.src = state.bg.url; img.style.display = "block"; }
+  } else { grad.style.display = "block"; }
+}
+
+/* ---------- exports: SRT / LRC ---------- */
+function buildSRT() {
+  var out = [], n = 0;
+  state.lines.forEach(function (l, i) {
+    if (l.start === null) return;
+    n++;
+    out.push(n + "\n" + fmtSRT(l.start) + " --> " + fmtSRT(lineEnd(i)) + "\n" + l.text + "\n");
+  });
+  return out.join("\n");
+}
+function buildLRC() {
+  var head = [];
+  if ($("st-title").value.trim()) head.push("[ti:" + $("st-title").value.trim() + "]");
+  if ($("st-artist").value.trim()) head.push("[ar:" + $("st-artist").value.trim() + "]");
+  var body = state.lines.filter(function (l) { return l.start !== null; })
+    .map(function (l) { return fmtLRC(l.start) + l.text; });
+  return head.concat(body).join("\n") + "\n";
+}
+function download(name, text, mime) {
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type: mime || "text/plain" }));
+  a.download = name; a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+}
+function songSlug() {
+  var s = ($("st-title").value.trim() || state.audioName || "song").toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return s || "song";
+}
+
+/* ---------- ASS build (mirrors the studio pipeline's pop/plain logic) -- */
+var ASS_GOLD = "&H4AD2FF&";
+function buildASS(w, h) {
+  var vertical = h >= w;
+  var fontsize = vertical ? 62 : 54, marginv = vertical ? 290 : 120;
+  var titleFs = vertical ? 72 : 60, artistFs = vertical ? 48 : 40;
+  var head = "[Script Info]\nScriptType: v4.00+\nPlayResX: " + w + "\nPlayResY: " + h + "\nWrapStyle: 0\n\n" +
+    "[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\n" +
+    "Style: CC,DejaVu Sans," + fontsize + ",&H00FFFFFF,&H00FFFFFF,&H00000000,&H96000000,1,0,0,0,100,100,0,0,1,5,2,2,70,70," + marginv + ",1\n" +
+    "Style: TT,DejaVu Sans," + titleFs + "," + ASS_GOLD + "," + ASS_GOLD + ",&H00000000,&H96000000,1,0,0,0,100,100,0,0,1,3,1,8,70,70," + Math.round(h * 0.11) + ",1\n" +
+    "Style: TA,DejaVu Sans," + artistFs + ",&H00FFFFFF,&H00FFFFFF,&H00000000,&H96000000,0,0,0,0,100,100,0,0,1,3,1,8,70,70," + Math.round(h * 0.11 + titleFs + 24) + ",1\n\n" +
+    "[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n";
+  var events = [];
+  var title = $("st-title").value.trim(), artist = $("st-artist").value.trim();
+  var totalDur = isFinite(audio.duration) && audio.duration > 0 ? audio.duration : (lineEnd(state.lines.length - 1) || 10);
+  if (title) events.push([0, totalDur, "TT", title.replace(/,/g, " ")]);
+  if (artist) events.push([0, totalDur, "TA", artist.replace(/,/g, " ")]);
+  state.lines.forEach(function (l, i) {
+    if (l.start === null) return;
+    lineChunks(i).forEach(function (ch) {
+      if (state.style === "pop") {
+        ch.words.forEach(function (wd, k) {
+          var es = k === 0 ? ch.start : wd.start;
+          var ee = (k + 1 < ch.words.length) ? ch.words[k + 1].start : ch.end;
+          if (ee <= es) ee = es + 0.05;
+          var parts = ch.words.map(function (w2, j) {
+            return j === k ? "{\\c" + ASS_GOLD + "\\fscx160\\fscy160\\t(0,120,\\fscx100\\fscy100)}" + w2.text + "{\\r}" : w2.text;
+          });
+          events.push([es, ee, "CC", parts.join(" ")]);
+        });
+      } else {
+        events.push([ch.start, ch.end, "CC", ch.words.map(function (w) { return w.text; }).join(" ")]);
+      }
+    });
+  });
+  events.sort(function (a, b) { return a[0] - b[0]; });
+  return head + events.map(function (e) {
+    return "Dialogue: 0," + fmtASS(e[0]) + "," + fmtASS(e[1]) + "," + e[2] + ",,0,0,0,," + e[3];
+  }).join("\n") + "\n";
+}
+
+/* ---------- project autosave (this browser only) ---------- */
+function saveProject() {
+  try {
+    localStorage.setItem("gv-lyric-studio", JSON.stringify({
+      lyrics: $("st-lyrics").value, title: $("st-title").value, artist: $("st-artist").value,
+      lines: state.lines, bg: state.bg.kind === "library" ? state.bg : { kind: "library", name: "dark-stage" },
+      format: state.format, style: state.style
+    }));
+  } catch (e) {}
+}
+function restoreProject() {
+  try {
+    var p = JSON.parse(localStorage.getItem("gv-lyric-studio") || "null");
+    if (!p) return;
+    $("st-lyrics").value = p.lyrics || ""; $("st-title").value = p.title || ""; $("st-artist").value = p.artist || "";
+    state.lines = p.lines || []; state.bg = p.bg || state.bg;
+    state.format = p.format || state.format; state.style = p.style || state.style;
+    $("st-format").value = state.format; $("st-style").value = state.style;
+  } catch (e) {}
+}
+
+/* ---------- wiring ---------- */
+$("st-file").addEventListener("change", function () {
+  var f = this.files[0]; if (!f) return;
+  state.audioFile = f; state.audioName = f.name;
+  audio.src = URL.createObjectURL(f);
+  saveProject();
+});
+$("st-load-lines").addEventListener("click", loadLinesFromText);
+$("st-clear-project").addEventListener("click", function () {
+  if (!confirm("Clear lyrics, timings and picks on this page?")) return;
+  state.lines = []; state.sel = 0; $("st-lyrics").value = "";
+  localStorage.removeItem("gv-lyric-studio"); renderLines();
+});
+$("st-tap").addEventListener("click", tapSync);
+document.addEventListener("keydown", function (e) {
+  if ((e.key === "t" || e.key === "T") && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) tapSync();
+});
+document.querySelectorAll("[data-nudge]").forEach(function (b) {
+  b.addEventListener("click", function () { nudgeSelected(parseFloat(b.dataset.nudge)); });
+});
+document.querySelectorAll("[data-rate]").forEach(function (b) {
+  b.addEventListener("click", function () { audio.playbackRate = parseFloat(b.dataset.rate); });
+});
+$("st-clear-line").addEventListener("click", function () {
+  var l = state.lines[state.sel]; if (l) { l.start = null; renderLines(); }
+});
+$("st-bg-file").addEventListener("change", function () {
+  var f = this.files[0]; if (!f) return;
+  state.bg = { kind: "upload", url: URL.createObjectURL(f), isVideo: /^video\//.test(f.type), file: f };
+  buildBgGrid(); applyBgPreview();
+});
+$("st-format").addEventListener("change", function () {
+  state.format = this.value;
+  $("st-stage").className = "studio-stage " + (state.format === "1080x1920" ? "vertical" : "wide");
+  saveProject();
+});
+$("st-style").addEventListener("change", function () { state.style = this.value; saveProject(); });
+$("st-title").addEventListener("input", updateTitleLayer);
+$("st-artist").addEventListener("input", updateTitleLayer);
+$("st-export-srt").addEventListener("click", function () {
+  if (!timedLines().length) { alert("No timed lines yet — tap at least one line in time."); return; }
+  download(songSlug() + ".srt", buildSRT(), "application/x-subrip");
+});
+$("st-export-lrc").addEventListener("click", function () {
+  if (!timedLines().length) { alert("No timed lines yet — tap at least one line in time."); return; }
+  download(songSlug() + ".lrc", buildLRC());
+});
+$("st-send-wa").addEventListener("click", function () {
+  var bgLabel = state.bg.kind === "library"
+    ? (BACKGROUNDS.filter(function (b) { return b.name === state.bg.name; })[0] || {}).label || state.bg.name
+    : "My own background (sending it in chat)";
+  var lines = [
+    "GV LYRIC STUDIO - Timed Project (FREE beta)",
+    "Stage name: " + ($("st-artist").value.trim() || "—"),
+    "Song title: " + ($("st-title").value.trim() || "—"),
+    "Style: " + (state.style === "pop" ? "POP / ZOOM — Gold" : "PLAIN"),
+    "Background: " + bgLabel,
+    "Format: " + state.format.replace("x", "×"),
+    "Lines timed: " + timedLines().length + " of " + state.lines.length,
+    "I'm attaching my song + the SRT timing file from the Lyric Studio in this chat."
+  ];
+  window.open("https://wa.me/17189088466?text=" + encodeURIComponent(lines.join("\n")), "_blank");
+});
+
+/* ---------- in-browser render (ffmpeg.wasm, vendored under
+   assets/ffmpeg/ — loads same-origin, no CDN, no account) ---------- */
+var ffInstance = null;
+function setRenderStatus(pct, label) {
+  $("st-prog-wrap").style.display = "block";
+  if (pct !== null && pct !== undefined) $("st-prog").value = Math.max(0, Math.min(100, pct));
+  if (label) $("st-prog-label").textContent = label;
+}
+async function ensureFFmpeg() {
+  if (ffInstance) return ffInstance;
+  setRenderStatus(2, "Loading the render engine (one-time, ~30 MB, stays on this page)…");
+  var mod = await import("./assets/ffmpeg/ffmpeg/esm/index.js");
+  var util = await import("./assets/ffmpeg/util/esm/index.js");
+  var ffmpeg = new mod.FFmpeg();
+  ffmpeg.on("progress", function (e) {
+    if (e && typeof e.progress === "number")
+      setRenderStatus(15 + Math.round(e.progress * 80), "Rendering… " + Math.round(e.progress * 100) + "%");
+  });
+  var core = function (p) { return new URL("./assets/ffmpeg/core/esm/" + p, location.href).href; };
+  await ffmpeg.load({ coreURL: core("ffmpeg-core.js"), wasmURL: core("ffmpeg-core.wasm") });
+  ffInstance = { ffmpeg: ffmpeg, fetchFile: util.fetchFile };
+  return ffInstance;
+}
+$("st-render").addEventListener("click", async function () {
+  var btn = this;
+  try {
+    if (!state.audioFile) { alert("Load your song first (step 1)."); return; }
+    if (!timedLines().length) { alert("No timed lines yet — tap at least one line in time (step 2)."); return; }
+    btn.disabled = true;
+    var dims = state.format.split("x"), W = +dims[0], H = +dims[1];
+    var dur = isFinite(audio.duration) && audio.duration > 0 ? audio.duration : lineEnd(state.lines.length - 1);
+    var ctx = await ensureFFmpeg();
+    var ffmpeg = ctx.ffmpeg;
+    setRenderStatus(6, "Preparing your song + background…");
+    var audioName = "song" + (state.audioFile.name.match(/\.[a-z0-9]+$/i) || [".audio"])[0].toLowerCase();
+    await ffmpeg.writeFile(audioName, await ctx.fetchFile(state.audioFile));
+    var bgName, bgInput;
+    if (state.bg.kind === "upload" && state.bg.file) {
+      var ext = (state.bg.file.name.match(/\.[a-z0-9]+$/i) || [".bin"])[0].toLowerCase();
+      bgName = "bg" + ext;
+      await ffmpeg.writeFile(bgName, await ctx.fetchFile(state.bg.file));
+      bgInput = state.bg.isVideo ? ["-stream_loop", "-1", "-i", bgName] : ["-loop", "1", "-framerate", "30", "-i", bgName];
+    } else {
+      bgName = "bg.mp4";
+      var resp = await fetch("assets/lyric-bg/" + state.bg.name + ".mp4");
+      if (!resp.ok) throw new Error("background fetch failed (" + resp.status + ")");
+      await ffmpeg.writeFile(bgName, await ctx.fetchFile(new Blob([await resp.arrayBuffer()], { type: "video/mp4" })));
+      bgInput = ["-stream_loop", "-1", "-i", bgName];
+    }
+    await ffmpeg.writeFile("lyrics.ass", new TextEncoder().encode(buildASS(W, H)));
+    /* The wasm core ships no fonts — hand libass the DejaVu pair or the
+       lyrics silently render as nothing. */
+    for (var fi = 0; fi < ["DejaVuSans.ttf", "DejaVuSans-Bold.ttf"].length; fi++) {
+      var fname = ["DejaVuSans.ttf", "DejaVuSans-Bold.ttf"][fi];
+      var fres = await fetch("assets/ffmpeg/fonts/" + fname);
+      if (!fres.ok) throw new Error("font fetch failed (" + fres.status + ")");
+      await ffmpeg.writeFile(fname, await ctx.fetchFile(new Blob([await fres.arrayBuffer()], { type: "font/ttf" })));
+    }
+    setRenderStatus(15, "Rendering…");
+    var vf = "scale=" + W + ":" + H + ":force_original_aspect_ratio=increase,crop=" + W + ":" + H + ",fps=30,ass=lyrics.ass:fontsdir=/";
+    var args = bgInput.concat(["-i", audioName, "-t", dur.toFixed(2), "-vf", vf,
+      "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
+      "-c:a", "aac", "-ar", "48000", "-b:a", "192k", "-shortest", "out.mp4"]);
+    var rc = await ffmpeg.exec(args);
+    if (rc !== 0) throw new Error("render engine returned code " + rc);
+    var data = await ffmpeg.readFile("out.mp4");
+    setRenderStatus(100, "Done — your lyric video is downloading. No watermark, full HD, audio at 48 kHz.");
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([data.buffer], { type: "video/mp4" }));
+    a.download = songSlug() + "-lyric-video.mp4"; a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 8000);
+  } catch (err) {
+    setRenderStatus(0, "Render hit a wall: " + (err && err.message ? err.message : String(err)) +
+      " — the studio lane below still works: send the timed project and we'll render it for you.");
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+restoreProject();
+buildBgGrid();
+applyBgPreview();
+renderLines();
+updateTitleLayer();
+$("st-stage").className = "studio-stage " + (state.format === "1080x1920" ? "vertical" : "wide");
+</script>
+</body>
+</html>

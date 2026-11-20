@@ -51,9 +51,16 @@
     <p class="muted">Send us your song and we turn it into a synced, animated lyric video — every word timed to your vocal, styled and ready to post. It's built and rendered by the GV studio pipeline, then delivered back to you. No watermark stamped on your art, no per-video fee while the beta runs.</p>
     <div class="cta-row">
       <a class="btn btn-gold" href="#start">Make My Lyric Video</a>
+      <a class="btn" href="lyric-studio.html">Open The Free Lyric Studio</a>
       <a class="btn" href="services.html">All Artist Services</a>
     </div>
   </section>
+
+  <h2 class="section-title">New — GV Lyric Studio (Free, Do It Yourself)</h2>
+  <div class="card">
+    <p><span>Time It Yourself, Render It Yourself</span>The <a href="lyric-studio.html"><strong>GV Lyric Studio</strong></a> puts the timing in your hands: load your song (it never leaves your device), paste your lyrics, tap each line in time with your vocal, pick a background, and render the video right in your browser — or export the SRT/LRC timing file and send the timed project to us on WhatsApp and we'll render it on the studio pipeline. Same styles, same no-watermark promise.</p>
+    <p><a class="btn btn-gold" href="lyric-studio.html">Open The Lyric Studio →</a></p>
+  </div>
 
   <h2 class="section-title">How It Works</h2>
   <div class="info-grid">
@@ -61,7 +68,7 @@
     <div class="card"><p><span>2. We Sync Every Word</span>Our studio pipeline transcribes your vocal and times every single word to the performance — then animates the lyrics in the style you picked.</p></div>
     <div class="card"><p><span>3. Your Video Comes Back</span>The finished lyric video is delivered back to you — full HD, ready for Reels, TikTok, Shorts and your release rollout. <strong>No watermark.</strong></p></div>
   </div>
-  <div class="note-strip">Heads up, honestly: your video is made by the GV studio pipeline and delivered back to you — it is not an instant in-browser render. Good sync takes real processing, and we'd rather send you a right one than a fast wrong one.</div>
+  <div class="note-strip">Heads up, honestly: this order lane is made by the GV studio pipeline and delivered back to you — that's the fast, done-for-you route. Want it right now instead? The <a href="lyric-studio.html">Lyric Studio</a> renders in your own browser (Chrome, tested) once you've tapped the timing in yourself.</div>
 
   <h2 class="section-title">Pick Your Style</h2>
   <div class="info-grid">
@@ -91,6 +98,17 @@
           <option>Widescreen 1920×1080 (YouTube)</option>
         </select>
       </label>
+      <label>Background
+        <select id="lv-bg">
+          <option>Dark Stage</option>
+          <option>Gold Luxe</option>
+          <option>Neon Club</option>
+          <option>Studio</option>
+          <option>City Night</option>
+          <option>Clean Minimal</option>
+          <option>My own — I'll send it on WhatsApp</option>
+        </select>
+      </label>
       <label>Your lyrics (optional — paste them and we sync to your exact words)<textarea id="lv-lyrics" rows="4" placeholder="Paste your lyrics here, or leave blank and we transcribe the song"></textarea></label>
       <label>Anything else<textarea id="lv-details" rows="3" placeholder="Release date, colours, anything you want in the video"></textarea></label>
       <button class="btn btn-gold" type="submit">Send via WhatsApp</button>
@@ -117,6 +135,7 @@ document.getElementById("lv-form").addEventListener("submit", function (e) {
     "Song link: " + (document.getElementById("lv-link").value || "sending the file on WhatsApp"),
     "Style: " + document.getElementById("lv-style").value,
     "Format: " + document.getElementById("lv-format").value,
+    "Background: " + document.getElementById("lv-bg").value,
     "Lyrics: " + (lyrics ? "pasted below" : "none — transcribe the song"),
     "Details: " + (document.getElementById("lv-details").value || "n/a")
   ];
